@@ -52,9 +52,5 @@ output: github_document
 ```
 
   - For snowfall, the most commonly observed values are 0, which has a total occurrence of 1112758
-  
-```{r}
-  ny_noaa
-```
-  
+
   
