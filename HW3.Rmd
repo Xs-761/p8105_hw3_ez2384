@@ -1,6 +1,44 @@
 ---
-title: "HW3"
+title: "P8105_EZ2384_HW3"
 output: github_document
 ---
 
-TEST
+```{r load_data, message=FALSE}
+# Load the required dataset
+  library(p8105.datasets)
+  data("ny_noaa")
+```
+
+### Problem 1
+
+  - Dataset `ny_noaa` is of size `r nrow(ny_noaa)` x  `r ncol(ny_noaa)`, with variables
+      - **id**    [char]: Weather station ID
+      - **date**  [date]: Date of observation
+      - **prcp**  [int] : Precipitation (tenths of mm)
+      - **snow**  [int] : Snowfall (mm)
+      - **snwd**  [int] : Snow depth (mm)
+      - **tmax**  [char]: Maximum temperature (tenths of degrees C)
+      - **tmin**  [char]: Minimum temperature (tenths of degrees C)
+  - Missing Data
+      - `tmin` and `tmax` contains a great deal of missing values
+      - `prcp` and `snow` contains some missing values
+      - `id` and `date` are complete
+
+```{r Data_Cleaning}
+  ny_noaa %>% janitor::clean_names()
+
+```
+
+
+- Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall
+  are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
+- Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable
+  interpretable structure? Any outliers?
+- Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot
+  showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+  
+```{r}
+ny_noaa
+```
+  
+  
