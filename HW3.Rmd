@@ -132,26 +132,52 @@ editor_options:
 
 - Import, clean, and tidy these data, and describe the resulting dataset.
 ```{r}
-  city_bike1 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv") %>% janitor::clean_names()
-  city_bike2 = read.csv("../../Datasets/CityBike/CityBike_July2020.csv") %>% janitor::clean_names()
-  city_bike3 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv") %>% janitor::clean_names()
-  city_bike4 = read.csv("../../Datasets/CityBike/CityBike_July2024.csv") %>% janitor::clean_names()
+  city_bike1 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv") %>% janitor::clean_names() %>% mutate("year"="2020", "month"="01")  %>%
+               relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name")  %>%
+               rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", 
+                      "end_station"="end_station_name")
+  city_bike2 = read.csv("../../Datasets/CityBike/CityBike_July2020.csv") %>% janitor::clean_names() %>% mutate("year"="2020", "month"="07")  %>%
+               relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name")  %>%
+               rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", 
+                      "end_station"="end_station_name")
+  city_bike3 = read.csv("../../Datasets/CityBike/CityBike_Jan2024.csv") %>% janitor::clean_names() %>% mutate("year"="2024", "month"="01")  %>%
+               relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name")  %>%
+               rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", 
+                      "end_station"="end_station_name")
+  city_bike4 = read.csv("../../Datasets/CityBike/CityBike_July2024.csv") %>% janitor::clean_names() %>% mutate("year"="2024", "month"="07")  %>%
+               relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name")  %>%
+               rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", 
+                      "end_station"="end_station_name")
   
   head(city_bike1)
   head(city_bike2)
   head(city_bike3)
   head(city_bike4)
 
+  city_bike_binded = bind_rows(city_bike1,city_bike2,city_bike3,city_bike4) %>% arrange("id")
+  head(city_bike_binded)
   
+  table_by_YearMonthType =  city_bike_binded %>% group_by(year, month, type) %>% count(name="count")
+  table_by_YearMonthType
+
+  top5_starting_positions = city_bike4 %>% group_by(start_station) %>% count(name="count")
+  head(top5_starting_positions, n=5) # top 5 originating stations and the corresponding number of rides in July.2024
   
 ```
 
 - Description of CityBike Datasets
 
-- Produce a reader-friendly table showing the total number of rides in each combination of year and month separating casual riders and Citi Bike members. Comment on these results.
-  
-  Make a table showing the 5 most popular starting stations for July 2024; include the number of rides originating from these stations.
-  
+- Comment on table_by_YearMonthType
+  - The total number of riders rise considerably each year from 2020 to 2024, and has risen from 12480 riders in Jan.2020 to 47156 riders
+    in July.2024.
+  - The total number of members rise steadily and considerably each time interval from Jan.2020 to July.2020 to Jan.2024 to July.2024
+  - Overall, for each timeslot, the number of members are considerably lower compared to the number of casual riders in that event.
+
+
+
+
+
+
   Make a plot to investigate the effects of day of the week, month, and year on median ride duration. This plot can include one or more panels, but should facilitate comparison across all variables of interest. Comment on your observations from this plot.
   
   There were relatively few electric Citi Bikes in 2020, but many more are available now. For data in 2024, make a figure that shows the impact of month, membership status, and bike type on the distribution of ride duration. Comment on your results.
