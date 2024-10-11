@@ -1,6 +1,8 @@
 ---
 title: "P8105_EZ2384_HW3"
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r load_data, message=FALSE}
@@ -56,16 +58,18 @@ output: github_document
 ### Problem 2
 
   *  Load, tidy, merge, and otherwise organize the data sets.
-     Exclusion of participants less than 21 yrs and those with missing demographc data.
-     Encoded dataset so that all columns converted into character type.
+     Exclusion of participants less than 21 yrs and those with missing demographic data.
+     Encoded dataset so that all columns in the demographics dataset are converted into character type.
 
 ```{r}
-  accelerometers =  read.csv("../../Datasets/accelerometers.csv", skip=4) %>% janitor::clean_names() %>% filter(age>=21) %>%
-                    mutate(across(seqn:education, as.character)) %>%  
-                    mutate( sex=recode(sex, "1"="male", "2"="female"), 
-                            education=recode(education, "1"="lower than High School", "2"="equivalent to High School", 
-                                                        "3"="above High School"))  %>% drop_na()
-  head(accelerometers)
+  demographics =  read.csv("../../Datasets/participant_demographics.csv", skip=4) %>% janitor::clean_names() %>% filter(age>=21) %>%
+                  mutate(across(seqn:education, as.character)) %>%  
+                  mutate(sex=recode(sex, "1"="male", "2"="female"), 
+                         education=recode(education, "1"="lower than High School", "2"="equivalent to High School", "3"="above High School")) %>%                   rename(id=seqn) %>% drop_na()
+
+  accelerometers= read.csv("../../Datasets/accelerometers.csv") %>% janitor::clean_names() %>% rename(id=seqn) %>% mutate(id=as.character(id))
+  
+  merged = left_join(demographics, accelerometers, "id")
 ```
 
   * Produce a reader-friendly table for the number of men and women in each education category
@@ -73,17 +77,16 @@ output: github_document
     Comment on these items.
 ```{r}
   # Table
-  table_by_education =  accelerometers %>% group_by(education, sex) %>% count(name="count")
+  table_by_education =  demographics %>% group_by(education, sex) %>% count(name="count")
   table_by_education
   
   # Plot
-  ggplot(accelerometers, aes(x = sex, fill = education)) +
-    geom_bar(position = "dodge") +
-    labs(title = "Distribution of Sex by Education Level",
-         x = "Sex",
-         y = "Count",
-         fill = "Education Level") +
-    theme_light()
+  barplot = ggplot(demographics, aes(x = sex, fill = education)) +
+            geom_bar(position = "dodge") +
+            labs(title = "Distribution of Sex by Education Level", x = "Sex", y = "Count", fill = "Education Level") +
+            theme_light()
+  barplot
+
 ```
   
   - From the bar graph we can see that
@@ -95,6 +98,28 @@ output: github_document
     Your plot should compare men to women and have separate panels for each education level.
     Include a trend line or a smooth line to illustrate differences.
     Comment on your plot.
+    
+```{r}
+  # Aggregated Plot
+  aggregated = merged %>% mutate(total_minutes=rowSums(select(.,starts_with("min")))) %>% 
+                          relocate("id", "sex", "age", "bmi", "education", "total_minutes")
+  
+  # Plot Total_Minutes against Age
+  scatterplot = aggregated %>% mutate(age=as.integer(age)) %>%
+                ggplot(., mapping=aes(x=age, y=total_minutes, color=sex)) + geom_point(na.rm=TRUE, size=1) + theme_light() +
+                ggtitle("Scatterplot of Age against Total Minutes") + xlab("Age") + ylab("Total Minutes")+
+                scale_x_continuous(expand=c(0,0), limits=c(0,100)) + theme(plot.title = element_text(hjust=0.5)) + geom_smooth() +
+                facet_grid( . ~ education )
+  scatterplot
+  
+```
+    
+  - From the scatterplot we can see that
+    - Overall, participants have lower total minutes as age increases, regardless of their sex and education levels.
+    - Overall, males tend to have higher total minutes compared to females, regardless of their age and education levels.
+    - For those with education level above high school, the total minutes for subjects is relatively smooth and even.
+      For those with education level equivalent to high school, the total minutes for subjects has a peak around middle ages.
+      For those with education level lower than high school, the total minutes for subjects drops for all age intervals as age increases.
     
   * Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex.
     Describe in words any patterns or conclusions you can make based on this graph;
