@@ -8,11 +8,12 @@ editor_options:
 ```{r load_data, message=FALSE}
 # Load the required dataset
   library(p8105.datasets)
-      data("ny_noaa")
   library(dplyr)
   library(ggplot2)
   library(tidyverse)
   library(patchwork)
+  
+  data("ny_noaa")
 ```
 
 ### Problem 1
@@ -66,7 +67,7 @@ editor_options:
   demographics =  read.csv("../../Datasets/participant_demographics.csv", skip=4) %>% janitor::clean_names() %>% filter(age>=21) %>%
                   mutate(across(seqn:education, as.character)) %>%  
                   mutate(sex=recode(sex, "1"="male", "2"="female"), 
-                         education=recode(education, "1"="lower than High School", "2"="equivalent to High School", "3"="above High School")) %>%                   rename(id=seqn) %>% drop_na()
+                         education=recode(education, "1"="lower than High School", "2"="equivalent to High School", "3"="above High School")) %>% rename(id=seqn) %>% drop_na()
 
   accelerometers= read.csv("../../Datasets/accelerometers.csv") %>% janitor::clean_names() %>% rename(id=seqn) %>% mutate(id=as.character(id))
   
@@ -138,11 +139,6 @@ editor_options:
   city_bike2 = read.csv("../../Datasets/CityBike/CityBike_July2020.csv")  %>% janitor::clean_names() %>% mutate("year"="2020", "month"="July")
   city_bike3 = read.csv("../../Datasets/CityBike/CityBike_Jan2024.csv")   %>% janitor::clean_names() %>% mutate("year"="2024", "month"="Jan")
   city_bike4 = read.csv("../../Datasets/CityBike/CityBike_July2024.csv")  %>% janitor::clean_names() %>% mutate("year"="2024", "month"="July")
-  
-  head(city_bike1)
-  head(city_bike2)
-  head(city_bike3)
-  head(city_bike4)
 
 # Combined CityBike Dataframe
   city_bike_binded = bind_rows(city_bike1,city_bike2,city_bike3,city_bike4) %>%
@@ -150,7 +146,6 @@ editor_options:
                      rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", "end_station"="end_station_name") %>%
                      mutate(weekdays=recode(weekdays, "Monday"="Mon","Tuesday"="Tue", "Wednesday"="Wed", "Thursday"="Thu", "Friday"="Fri", "Saturday"="Sat", "Sunday"="Sun")) %>%
                      mutate(weekdays=factor(weekdays, levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")))
-  head(city_bike_binded)
 
 # Table showing total number of rides in each combination of year and month
   table_by_YearMonthType =  city_bike_binded %>% group_by(year, month, type) %>% count(name="count")
@@ -166,12 +161,6 @@ editor_options:
   median_duration_weekdays =  city_bike_binded %>% group_by(weekdays) %>% summarise(median_duration = median(duration, na.rm = TRUE))
   median_duration_membership  =  city_bike_binded %>% group_by(type) %>% summarise(median_duration = median(duration, na.rm = TRUE))
   median_duration_bike        =  city_bike_binded %>% group_by(bike) %>% summarise(median_duration = median(duration, na.rm = TRUE))
-
-  median_duration_year
-  median_duration_month
-  median_duration_weekdays
-  median_duration_membership
-  median_duration_bike  
 
 # Subplots of Median Riding Duration depending on year/month/weekday
   subplot1 = ggplot(median_duration_year, aes(x = year, y = median_duration)) +
