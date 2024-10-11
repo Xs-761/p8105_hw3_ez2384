@@ -12,6 +12,7 @@ editor_options:
   library(dplyr)
   library(ggplot2)
   library(tidyverse)
+  library(patchwork)
 ```
 
 ### Problem 1
@@ -132,53 +133,77 @@ editor_options:
 
 - Import, clean, and tidy these data, and describe the resulting dataset.
 ```{r}
-  city_bike1 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv") %>% janitor::clean_names() %>% mutate("year"="2020", "month"="01")  %>%
-               relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name")  %>%
-               rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", 
-                      "end_station"="end_station_name")
-  city_bike2 = read.csv("../../Datasets/CityBike/CityBike_July2020.csv") %>% janitor::clean_names() %>% mutate("year"="2020", "month"="07")  %>%
-               relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name")  %>%
-               rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", 
-                      "end_station"="end_station_name")
-  city_bike3 = read.csv("../../Datasets/CityBike/CityBike_Jan2024.csv") %>% janitor::clean_names() %>% mutate("year"="2024", "month"="01")  %>%
-               relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name")  %>%
-               rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", 
-                      "end_station"="end_station_name")
-  city_bike4 = read.csv("../../Datasets/CityBike/CityBike_July2024.csv") %>% janitor::clean_names() %>% mutate("year"="2024", "month"="07")  %>%
-               relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name")  %>%
-               rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", 
-                      "end_station"="end_station_name")
+# CityBike Datasets
+  city_bike1 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv")   %>% janitor::clean_names() %>% mutate("year"="2020", "month"="Jan")
+  city_bike2 = read.csv("../../Datasets/CityBike/CityBike_July2020.csv")  %>% janitor::clean_names() %>% mutate("year"="2020", "month"="July")
+  city_bike3 = read.csv("../../Datasets/CityBike/CityBike_Jan2024.csv")   %>% janitor::clean_names() %>% mutate("year"="2024", "month"="Jan")
+  city_bike4 = read.csv("../../Datasets/CityBike/CityBike_July2024.csv")  %>% janitor::clean_names() %>% mutate("year"="2024", "month"="July")
   
   head(city_bike1)
   head(city_bike2)
   head(city_bike3)
   head(city_bike4)
 
-  city_bike_binded = bind_rows(city_bike1,city_bike2,city_bike3,city_bike4) %>% arrange("id")
+# Combined CityBike Dataframe
+  city_bike_binded = bind_rows(city_bike1,city_bike2,city_bike3,city_bike4) %>%
+                     relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name") %>%
+                     rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", "end_station"="end_station_name") %>%
+                     mutate(weekdays=recode(weekdays, "Monday"="Mon","Tuesday"="Tue", "Wednesday"="Wed", "Thursday"="Thu", "Friday"="Fri", "Saturday"="Sat", "Sunday"="Sun")) %>%
+                     mutate(weekdays=factor(weekdays, levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")))
   head(city_bike_binded)
-  
+
+# Table showing total number of rides in each combination of year and month
   table_by_YearMonthType =  city_bike_binded %>% group_by(year, month, type) %>% count(name="count")
   table_by_YearMonthType
 
-  top5_starting_positions = city_bike4 %>% group_by(start_station) %>% count(name="count")
-  head(top5_starting_positions, n=5) # top 5 originating stations and the corresponding number of rides in July.2024
+# Top 5 originating stations and the corresponding number of rides in July.2024
+  top5_starting_positions = city_bike4 %>% group_by(start_station_name) %>% count(name="count")
+  head(top5_starting_positions, n=5)
+  
+# Median Riding Duration depending on year/month/weekday
+  median_duration_year     =  city_bike_binded %>% group_by(year) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_month    =  city_bike_binded %>% group_by(month) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_weekdays =  city_bike_binded %>% group_by(weekdays) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+
+  median_duration_year
+  median_duration_month
+  median_duration_weekdays
+  
+# Subplots of Median Riding Duration depending on year/month/weekday
+  subplot1 = ggplot(median_duration_year, aes(x = year, y = median_duration)) +
+             geom_bar(stat="identity", fill="steelblue", width=0.75) +
+             xlab("Year") + ylab("Median Duration") + ggtitle("Median Duration(Year)") +
+             theme_light() + theme(plot.title = element_text(hjust=0.5))
+  
+  subplot2 = ggplot(median_duration_month, aes(x=month, y=median_duration)) +
+             geom_bar(stat="identity", fill="darkblue", width=0.75) +
+             xlab("Month") + ylab("Median Duration") + ggtitle("Median Duration(Month)") +
+             theme_light() + theme(plot.title = element_text(hjust=0.5))
+  
+  subplot3 = ggplot(median_duration_weekdays, aes(x=weekdays, y=median_duration)) +
+             geom_bar(stat="identity", fill="royalblue") +
+             xlab("Weekday") + ylab("Median Duration") + ggtitle("Median Duration(Weekday)") +
+             theme_light() + theme(plot.title = element_text(hjust=0.5))
+
+# Final plot of Median Riding Duration depending on year/month/weekday
+  subplot1 + subplot2 + subplot3
+
+# Figure showing impact of month, membership status, and bike type on the distribution of ride duration
   
 ```
 
 - Description of CityBike Datasets
 
 - Comment on table_by_YearMonthType
-  - The total number of riders rise considerably each year from 2020 to 2024, and has risen from 12480 riders in Jan.2020 to 47156 riders
-    in July.2024.
+  - The total number of riders rise considerably each year from 2020 to 2024, and has risen from 12480 riders in Jan.2020 to 47156 riders in July.2024.
   - The total number of members rise steadily and considerably each time interval from Jan.2020 to July.2020 to Jan.2024 to July.2024
-  - Overall, for each timeslot, the number of members are considerably lower compared to the number of casual riders in that event.
+  - Overall, for each timeslot, the number of members are considerably lower compared to the number of casual riders at that time.
 
-
-
-
-
-
-  Make a plot to investigate the effects of day of the week, month, and year on median ride duration. This plot can include one or more panels, but should facilitate comparison across all variables of interest. Comment on your observations from this plot.
+- Remark on plot showing median durations depending on year/month/weekday
+  - We can see a clear pattern that, citybike users in weekends are considerably more active compared to them in weekdays.
+  - The median users in 2024 is lower than that in 2020; and the median users in July is higher than that in January.
+    However, without more year groups and/or more month groups, we cannot conclude for sure whether there is a true pattern or
+    the observed difference is due merely to chance.
   
-  There were relatively few electric Citi Bikes in 2020, but many more are available now. For data in 2024, make a figure that shows the impact of month, membership status, and bike type on the distribution of ride duration. Comment on your results.
+For data in 2024, make a figure that shows the impact of month, membership status, and bike type on the distribution of ride duration. Comment on your results.
 
