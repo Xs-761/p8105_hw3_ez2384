@@ -118,7 +118,7 @@ P8105_EZ2384_HW3
   - Females have higher counts of education level above high school
   - Males have an education level more evenly distributed
 
-- Using your tidied dataset, aggregate acrss minutes to crea;te a total
+- Using your tidied dataset, aggregate across minutes to create a total
   activity variable for each participant. Plot these total
   activities(y-axis) against age(x-axis). Your plot should compare men
   to women and have separate panels for each education level. Include a
