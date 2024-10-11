@@ -261,9 +261,24 @@ P8105_EZ2384_HW3
 ![](HW3_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
 - Description of CityBike Datasets
-
+  - CityBike Datasets consists of 4 component datasets with each
+    consisting of 7 variables:
+    - ride_id : unique identifier for CityBike user for the particular
+      trip
+    - rideable_type: type of bike used by user for the particular trip
+    - weekdays: weekday info when riding for the particular trip
+    - duration: duration or ride for the particular trip
+    - start_station_name: set-off station name for the particular trip
+    - end_station_name: ending station name for the particular trip
+    - member_casual: membership type of the user for the particular trip
+  - Each dataset has dimensions as below:
+    - Dataset1: info of Jan.2020, dimension=12420 x 7
+    - Dataset2: info of July.2020, dimension=21048 x 7
+    - Dataset3: info of Jan.2024, dimension=18861 x 7
+    - Dataset4: info of July.2024, dimension=47156 x 7
+  - Completeness:
+    - Each component dataset is complete and without missing values
 - Comment on table_by_YearMonthType
-
   - The total number of riders rise considerably each year from 2020 to
     2024, and has risen from 12480 riders in Jan.2020 to 47156 riders in
     July.2024.
@@ -271,10 +286,8 @@ P8105_EZ2384_HW3
     interval from Jan.2020 to July.2020 to Jan.2024 to July.2024
   - Overall, for each timeslot, the number of members are considerably
     lower compared to the number of casual riders at that time.
-
 - Remark on plot showing median durations depending on
   year/month/weekday
-
   - We can see a clear pattern that, citybike users in weekends are
     considerably more active compared to them in weekdays.
   - The median users in 2024 is lower than that in 2020; and the median
@@ -282,10 +295,8 @@ P8105_EZ2384_HW3
     year groups and/or more month groups, we cannot conclude for sure
     whether there is a true pattern or the observed difference is due
     merely to chance.
-
 - Remark on plot showing median durations depending on
   membership_type/bike_type
-
   - Overall, those who are casual riders have a longer biking duration
     compared to members by a great amount.
   - Overall, users spend longer time using classic bikes compared to
