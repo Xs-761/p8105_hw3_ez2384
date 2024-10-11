@@ -312,10 +312,12 @@ P8105_EZ2384_HW3
     ## 5 1 Ave & E 30 St       57
 
 ``` r
-# Median Riding Duration depending on year/month/weekday
+# Median Riding Duration depending on Covariates
   median_duration_year     =  city_bike_binded %>% group_by(year) %>% summarise(median_duration = median(duration, na.rm = TRUE))
   median_duration_month    =  city_bike_binded %>% group_by(month) %>% summarise(median_duration = median(duration, na.rm = TRUE))
   median_duration_weekdays =  city_bike_binded %>% group_by(weekdays) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_membership  =  city_bike_binded %>% group_by(type) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_bike        =  city_bike_binded %>% group_by(bike) %>% summarise(median_duration = median(duration, na.rm = TRUE))
 
   median_duration_year
 ```
@@ -352,6 +354,26 @@ P8105_EZ2384_HW3
     ## 7 Sun                11.2
 
 ``` r
+  median_duration_membership
+```
+
+    ## # A tibble: 2 × 2
+    ##   type   median_duration
+    ##   <chr>            <dbl>
+    ## 1 casual           15.2 
+    ## 2 member            8.92
+
+``` r
+  median_duration_bike  
+```
+
+    ## # A tibble: 2 × 2
+    ##   bike          median_duration
+    ##   <chr>                   <dbl>
+    ## 1 classic_bike            10.2 
+    ## 2 electric_bike            9.46
+
+``` r
 # Subplots of Median Riding Duration depending on year/month/weekday
   subplot1 = ggplot(median_duration_year, aes(x = year, y = median_duration)) +
              geom_bar(stat="identity", fill="steelblue", width=0.75) +
@@ -368,7 +390,7 @@ P8105_EZ2384_HW3
              xlab("Weekday") + ylab("Median Duration") + ggtitle("Median Duration(Weekday)") +
              theme_light() + theme(plot.title = element_text(hjust=0.5))
 
-# Final plot of Median Riding Duration depending on year/month/weekday
+# Final plot of Median Riding Duration depending on Year/Month/Weekday
   subplot1 + subplot2 + subplot3
 ```
 
@@ -376,7 +398,22 @@ P8105_EZ2384_HW3
 
 ``` r
 # Figure showing impact of month, membership status, and bike type on the distribution of ride duration
+
+  subplot4 = ggplot(median_duration_membership, aes(x = type, y = median_duration)) +
+             geom_bar(stat="identity", fill="darkgreen", width=0.75) +
+             xlab("Membership Type") + ylab("Median Duration") + ggtitle("Median Duration(Membership Type)") +
+             theme_light() + theme(plot.title = element_text(hjust=0.5))
+  
+  subplot5 = ggplot(median_duration_bike, aes(x=bike, y=median_duration)) +
+             geom_bar(stat="identity", fill="darkred", width=0.75) +
+             xlab("Bike Type") + ylab("Median Duration") + ggtitle("Median Duration(Bike Type)") +
+             theme_light() + theme(plot.title = element_text(hjust=0.5))
+
+  # Final Plot of Median Riding Duration depending on Membership_Type/Bike_Type
+  subplot4 + subplot5
 ```
+
+![](HW3_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
 - Description of CityBike Datasets
 
@@ -401,6 +438,10 @@ P8105_EZ2384_HW3
     whether there is a true pattern or the observed difference is due
     merely to chance.
 
-For data in 2024, make a figure that shows the impact of month,
-membership status, and bike type on the distribution of ride duration.
-Comment on your results.
+- Remark on plot showing median durations depending on
+  membership_type/bike_type
+
+  - Overall, those who are casual riders have a longer biking duration
+    compared to members by a great amount.
+  - Overall, users spend longer time using classic bikes compared to
+    electric bikes, but this difference is not big.
