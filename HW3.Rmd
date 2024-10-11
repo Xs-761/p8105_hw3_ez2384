@@ -84,7 +84,7 @@ editor_options:
   barplot = ggplot(demographics, aes(x = sex, fill = education)) +
             geom_bar(position = "dodge") +
             labs(title = "Distribution of Sex by Education Level", x = "Sex", y = "Count", fill = "Education Level") +
-            theme_light()
+            theme_light() + theme(plot.title=element_text(hjust=0.5))
   barplot
 
 ```
@@ -105,12 +105,16 @@ editor_options:
                           relocate("id", "sex", "age", "bmi", "education", "total_minutes")
   
   # Plot Total_Minutes against Age
-  scatterplot = aggregated %>% mutate(age=as.integer(age)) %>%
-                ggplot(., mapping=aes(x=age, y=total_minutes, color=sex)) + geom_point(na.rm=TRUE, size=1) + theme_light() +
-                ggtitle("Scatterplot of Age against Total Minutes") + xlab("Age") + ylab("Total Minutes")+
-                scale_x_continuous(expand=c(0,0), limits=c(0,100)) + theme(plot.title = element_text(hjust=0.5)) + geom_smooth() +
-                facet_grid( . ~ education )
-  scatterplot
+  scatterplot_total = aggregated %>% mutate(age=as.integer(age)) %>%
+                      ggplot(., mapping=aes(x=age, y=total_minutes, color=sex)) + geom_point(na.rm=TRUE, size=1) + theme_light() +
+                      ggtitle("Scatterplot of Age against Total Minutes") + xlab("Age") + ylab("Total Minutes")+
+                      scale_x_continuous(expand=c(0,0), limits=c(0,100)) + theme(plot.title = element_text(hjust=0.5)) + geom_smooth() +
+                      facet_grid( . ~ education )
+  scatterplot_total
+  
+  # Plot 24-H Minutes against Age
+  scatterplot_24h = merged %>% mutate(age=as.integer(age)) %>%
+                    ggplot(., mapping=aes(x=age, y=))
   
 ```
     
@@ -122,8 +126,33 @@ editor_options:
       For those with education level lower than high school, the total minutes for subjects drops for all age intervals as age increases.
     
   * Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex.
-    Describe in words any patterns or conclusions you can make based on this graph;
-    including smooth trends may help identify differences.
+    Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.
 
 ### Problem 3
+
+- Import, clean, and tidy these data, and describe the resulting dataset.
+```{r}
+  city_bike1 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv") %>% janitor::clean_names()
+  city_bike2 = read.csv("../../Datasets/CityBike/CityBike_July2020.csv") %>% janitor::clean_names()
+  city_bike3 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv") %>% janitor::clean_names()
+  city_bike4 = read.csv("../../Datasets/CityBike/CityBike_July2024.csv") %>% janitor::clean_names()
+  
+  head(city_bike1)
+  head(city_bike2)
+  head(city_bike3)
+  head(city_bike4)
+
+  
+  
+```
+
+- Description of CityBike Datasets
+
+- Produce a reader-friendly table showing the total number of rides in each combination of year and month separating casual riders and Citi Bike members. Comment on these results.
+  
+  Make a table showing the 5 most popular starting stations for July 2024; include the number of rides originating from these stations.
+  
+  Make a plot to investigate the effects of day of the week, month, and year on median ride duration. This plot can include one or more panels, but should facilitate comparison across all variables of interest. Comment on your observations from this plot.
+  
+  There were relatively few electric Citi Bikes in 2020, but many more are available now. For data in 2024, make a figure that shows the impact of month, membership status, and bike type on the distribution of ride duration. Comment on your results.
 

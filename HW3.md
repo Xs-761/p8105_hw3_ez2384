@@ -100,7 +100,7 @@ P8105_EZ2384_HW3
   barplot = ggplot(demographics, aes(x = sex, fill = education)) +
             geom_bar(position = "dodge") +
             labs(title = "Distribution of Sex by Education Level", x = "Sex", y = "Count", fill = "Education Level") +
-            theme_light()
+            theme_light() + theme(plot.title=element_text(hjust=0.5))
   barplot
 ```
 
@@ -122,17 +122,23 @@ P8105_EZ2384_HW3
                           relocate("id", "sex", "age", "bmi", "education", "total_minutes")
   
   # Plot Total_Minutes against Age
-  scatterplot = aggregated %>% mutate(age=as.integer(age)) %>%
-                ggplot(., mapping=aes(x=age, y=total_minutes, color=sex)) + geom_point(na.rm=TRUE, size=1) + theme_light() +
-                ggtitle("Scatterplot of Age against Total Minutes") + xlab("Age") + ylab("Total Minutes")+
-                scale_x_continuous(expand=c(0,0), limits=c(0,100)) + theme(plot.title = element_text(hjust=0.5)) + geom_smooth() +
-                facet_grid( . ~ education )
-  scatterplot
+  scatterplot_total = aggregated %>% mutate(age=as.integer(age)) %>%
+                      ggplot(., mapping=aes(x=age, y=total_minutes, color=sex)) + geom_point(na.rm=TRUE, size=1) + theme_light() +
+                      ggtitle("Scatterplot of Age against Total Minutes") + xlab("Age") + ylab("Total Minutes")+
+                      scale_x_continuous(expand=c(0,0), limits=c(0,100)) + theme(plot.title = element_text(hjust=0.5)) + geom_smooth() +
+                      facet_grid( . ~ education )
+  scatterplot_total
 ```
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
 ![](HW3_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
+  # Plot 24-H Minutes against Age
+  scatterplot_24h = merged %>% mutate(age=as.integer(age)) %>%
+                    ggplot(., mapping=aes(x=age, y=))
+```
 
 - From the scatterplot we can see that
   - Overall, participants have lower total minutes as age increases,
@@ -151,3 +157,106 @@ P8105_EZ2384_HW3
   including smooth trends may help identify differences.
 
 ### Problem 3
+
+- Import, clean, and tidy these data, and describe the resulting
+  dataset.
+
+``` r
+  city_bike1 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv") %>% janitor::clean_names()
+  city_bike2 = read.csv("../../Datasets/CityBike/CityBike_July2020.csv") %>% janitor::clean_names()
+  city_bike3 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv") %>% janitor::clean_names()
+  city_bike4 = read.csv("../../Datasets/CityBike/CityBike_July2024.csv") %>% janitor::clean_names()
+  
+  head(city_bike1)
+```
+
+    ##            ride_id rideable_type  weekdays  duration         start_station_name
+    ## 1 4BE06CB33B037044  classic_bike   Tuesday 15.333267     Columbus Ave & W 95 St
+    ## 2 26886E034974493B  classic_bike Wednesday  5.309467            2 Ave & E 96 St
+    ## 3 24DC56060EBE6260  classic_bike    Friday  9.691800 Columbia St & Rivington St
+    ## 4 EEDC1053582D02E5  classic_bike    Sunday  6.996183     W 84 St & Columbus Ave
+    ## 5 2CD4BD4CEE2E50A9  classic_bike    Friday  2.849500     Forsyth St & Broome St
+    ## 6 E18682F9A4E501BB  classic_bike    Sunday 25.523467       Allen St & Hester St
+    ##           end_station_name member_casual
+    ## 1    E 53 St & Madison Ave        member
+    ## 2         1 Ave & E 110 St        member
+    ## 3  Grand St & Elizabeth St        member
+    ## 4   Columbus Ave & W 72 St        member
+    ## 5  Suffolk St & Stanton St        member
+    ## 6 Atlantic Ave & Furman St        member
+
+``` r
+  head(city_bike2)
+```
+
+    ##            ride_id rideable_type  weekdays  duration
+    ## 1 A7503F194A7CB244  classic_bike    Sunday  9.862550
+    ## 2 B47EBE0EA71E3275  classic_bike    Monday  8.289867
+    ## 3 8146F6C6855338C8  classic_bike Wednesday  5.390200
+    ## 4 D49560E3308D2128  classic_bike  Saturday 19.203617
+    ## 5 87687AAE400824DE  classic_bike   Tuesday 26.420533
+    ## 6 E30DFCD98462C9F9  classic_bike    Sunday 51.902067
+    ##            start_station_name                 end_station_name member_casual
+    ## 1  Franklin Ave & Empire Blvd Grand Army Plaza & Plaza St West        member
+    ## 2             E 33 St & 1 Ave                  E 33 St & 5 Ave        member
+    ## 3      George St & Wilson Ave     Willoughby Ave & Wyckoff Ave        member
+    ## 4 St. Nicholas Ave & W 126 St            Willis Ave & E 143 St        member
+    ## 5           Front St & Jay St          Grand St & Elizabeth St        member
+    ## 6   Clinton St & Joralemon St           Myrtle Ave & Linden St        casual
+
+``` r
+  head(city_bike3)
+```
+
+    ##            ride_id rideable_type  weekdays  duration         start_station_name
+    ## 1 4BE06CB33B037044  classic_bike   Tuesday 15.333267     Columbus Ave & W 95 St
+    ## 2 26886E034974493B  classic_bike Wednesday  5.309467            2 Ave & E 96 St
+    ## 3 24DC56060EBE6260  classic_bike    Friday  9.691800 Columbia St & Rivington St
+    ## 4 EEDC1053582D02E5  classic_bike    Sunday  6.996183     W 84 St & Columbus Ave
+    ## 5 2CD4BD4CEE2E50A9  classic_bike    Friday  2.849500     Forsyth St & Broome St
+    ## 6 E18682F9A4E501BB  classic_bike    Sunday 25.523467       Allen St & Hester St
+    ##           end_station_name member_casual
+    ## 1    E 53 St & Madison Ave        member
+    ## 2         1 Ave & E 110 St        member
+    ## 3  Grand St & Elizabeth St        member
+    ## 4   Columbus Ave & W 72 St        member
+    ## 5  Suffolk St & Stanton St        member
+    ## 6 Atlantic Ave & Furman St        member
+
+``` r
+  head(city_bike4)
+```
+
+    ##            ride_id rideable_type  weekdays  duration      start_station_name
+    ## 1 86AE148E36FBF035  classic_bike    Sunday 19.661183            Picnic Point
+    ## 2 FCF07A30F66B9B07 electric_bike  Thursday  7.676433         W 54 St & 9 Ave
+    ## 3 D8397E843C06644D  classic_bike  Thursday 24.465950        12 Ave & W 40 St
+    ## 4 E575690C13424E8C electric_bike   Tuesday  3.528600 Grand St & Havemeyer St
+    ## 5 184AABED46DCE11A electric_bike Wednesday 24.126050     Broadway & Kent Ave
+    ## 6 ACA61A92B5EA0D11  classic_bike  Saturday  7.825750          E 1 St & 1 Ave
+    ##          end_station_name member_casual
+    ## 1   Yankee Ferry Terminal        casual
+    ## 2         W 42 St & 8 Ave        casual
+    ## 3 W 84 St & Amsterdam Ave        member
+    ## 4      S 4 St & Rodney St        member
+    ## 5    Henry St & Degraw St        casual
+    ## 6   Mercer St & Spring St        member
+
+- Description of CityBike Datasets
+
+- Produce a reader-friendly table showing the total number of rides in
+  each combination of year and month separating casual riders and Citi
+  Bike members. Comment on these results.
+
+  Make a table showing the 5 most popular starting stations for July
+  2024; include the number of rides originating from these stations.
+
+  Make a plot to investigate the effects of day of the week, month, and
+  year on median ride duration. This plot can include one or more
+  panels, but should facilitate comparison across all variables of
+  interest. Comment on your observations from this plot.
+
+  There were relatively few electric Citi Bikes in 2020, but many more
+  are available now. For data in 2024, make a figure that shows the
+  impact of month, membership status, and bike type on the distribution
+  of ride duration. Comment on your results.
