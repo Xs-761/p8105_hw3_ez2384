@@ -147,13 +147,13 @@ editor_options:
   table_by_YearMonthType
 
 # Top 5 originating stations and the corresponding number of rides in July.2024
-  top5_starting_positions = city_bike4 %>% group_by(start_station_name) %>% count(name="count")
+  top5_starting_positions = city_bike4 %>% group_by(start_station_name) %>% count(name="count") %>% arrange(desc(count))
   head(top5_starting_positions, n=5)
   
 # Median Riding Duration depending on Covariates
-  median_duration_year     =  city_bike_binded %>% group_by(year) %>% summarise(median_duration = median(duration, na.rm = TRUE))
-  median_duration_month    =  city_bike_binded %>% group_by(month) %>% summarise(median_duration = median(duration, na.rm = TRUE))
-  median_duration_weekdays =  city_bike_binded %>% group_by(weekdays) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_year        =  city_bike_binded %>% group_by(year) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_month       =  city_bike_binded %>% group_by(month) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_weekdays    =  city_bike_binded %>% group_by(weekdays) %>% summarise(median_duration = median(duration, na.rm = TRUE))
   median_duration_membership  =  city_bike_binded %>% group_by(type) %>% summarise(median_duration = median(duration, na.rm = TRUE))
   median_duration_bike        =  city_bike_binded %>% group_by(bike) %>% summarise(median_duration = median(duration, na.rm = TRUE))
 

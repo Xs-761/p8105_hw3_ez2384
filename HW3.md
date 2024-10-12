@@ -230,25 +230,25 @@ P8105_EZ2384_HW3
 
 ``` r
 # Top 5 originating stations and the corresponding number of rides in July.2024
-  top5_starting_positions = city_bike4 %>% group_by(start_station_name) %>% count(name="count")
+  top5_starting_positions = city_bike4 %>% group_by(start_station_name) %>% count(name="count") %>% arrange(desc(count))
   head(top5_starting_positions, n=5)
 ```
 
     ## # A tibble: 5 × 2
     ## # Groups:   start_station_name [5]
-    ##   start_station_name count
-    ##   <chr>              <int>
-    ## 1 1 Ave & E 110 St      33
-    ## 2 1 Ave & E 118 St      21
-    ## 3 1 Ave & E 16 St       73
-    ## 4 1 Ave & E 18 St       75
-    ## 5 1 Ave & E 30 St       57
+    ##   start_station_name       count
+    ##   <chr>                    <int>
+    ## 1 Pier 61 at Chelsea Piers   163
+    ## 2 University Pl & E 14 St    155
+    ## 3 W 21 St & 6 Ave            152
+    ## 4 West St & Chambers St      150
+    ## 5 W 31 St & 7 Ave            146
 
 ``` r
 # Median Riding Duration depending on Covariates
-  median_duration_year     =  city_bike_binded %>% group_by(year) %>% summarise(median_duration = median(duration, na.rm = TRUE))
-  median_duration_month    =  city_bike_binded %>% group_by(month) %>% summarise(median_duration = median(duration, na.rm = TRUE))
-  median_duration_weekdays =  city_bike_binded %>% group_by(weekdays) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_year        =  city_bike_binded %>% group_by(year) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_month       =  city_bike_binded %>% group_by(month) %>% summarise(median_duration = median(duration, na.rm = TRUE))
+  median_duration_weekdays    =  city_bike_binded %>% group_by(weekdays) %>% summarise(median_duration = median(duration, na.rm = TRUE))
   median_duration_membership  =  city_bike_binded %>% group_by(type) %>% summarise(median_duration = median(duration, na.rm = TRUE))
   median_duration_bike        =  city_bike_binded %>% group_by(bike) %>% summarise(median_duration = median(duration, na.rm = TRUE))
 
