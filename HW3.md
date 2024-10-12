@@ -115,16 +115,45 @@ P8105_EZ2384_HW3
 ![](HW3_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
 
 ``` r
-# Plot of 24H-Minutes against Median of Acceleratorometers_Readings
+# Scatterplot of 24H-Minutes against Mean Acceleratorometers Readings
   temp_longer = merged %>% pivot_longer(., cols = starts_with("min"), names_to = "minutes", values_to = "readings") %>%
-                mutate(minutes = as.numeric(gsub("min","",minutes))) %>% arrange(minutes, education)
-
-  median_min  = temp_longer %>% group_by(minutes) %>% summarise(median_min = median(readings, na.rm=TRUE)) %>%
-                mutate(median_min=round(median_min, digits=4)) %>% arrange(minutes)
-  
-  scatterplot_minutes = ggplot(median_min, mapping=aes(x=minutes, y=median_min)) + geom_point(na.rm=TRUE, size=1) + theme_light() +
-                        scale_x_continuous(breaks=seq(0,1400, by=200)) + scale_y_continuous(breaks=seq(0,15,by=2))
+                mutate(minutes = as.numeric(gsub("min","",minutes)))
+  readings_longer = merged %>% pivot_longer(., cols = starts_with("min"), names_to = "minutes", values_to = "readings") %>%
+                    mutate(minutes = as.numeric(gsub("min","",minutes))) %>% group_by(minutes, sex, education) %>% summarise(mean=mean(readings, na.rm=TRUE))
 ```
+
+    ## `summarise()` has grouped output by 'minutes', 'sex'. You can override using
+    ## the `.groups` argument.
+
+``` r
+  scatterplot_24H = ggplot(readings_longer, mapping=aes(x=minutes, y=mean, color=sex)) + geom_point(size=0.25, rm.NA=TRUE) + theme_light() + facet_grid(.~education) + 
+                    geom_smooth(size=0.7) + scale_x_continuous(limits=c(0,1400), breaks=seq(0,1400, by=200)) + 
+                    scale_y_continuous(limits=c(0,18), breaks=seq(0,18,by=3)) + xlab("24H Scale in Minutes") + ylab("Mean Acceleratorometers Readings per Minute") +
+                    ggtitle("Scatterplot of 24H-Minutes against Mean Acceleratorometers Readings") + theme(legend.position = "bottom", plot.title=element_text(hjust=.5))
+```
+
+    ## Warning in geom_point(size = 0.25, rm.NA = TRUE): Ignoring unknown parameters:
+    ## `rm.NA`
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
+``` r
+  scatterplot_24H
+```
+
+    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+
+    ## Warning: Removed 240 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: Removed 240 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](HW3_files/figure-gfm/unnamed-chunk-1-3.png)<!-- -->
 
 - Remark on the barplot showing the distribution of sex by education
   level
@@ -142,13 +171,25 @@ P8105_EZ2384_HW3
     a peak around middle ages. For those with education level lower than
     high school, the total minutes for subjects drops for all age
     intervals as age increases.
-- Remark on the scatterplot of 24H Minutes against Median_Minutes
-  - We can see that the median minutes tend to fluctuate greatly during
-    a course of a day, but reaches the lowest point at around 200-300
-    minutes (about 3am to 5 am) and arrived at the peak at about 600-850
-    minutes(about 10am to 2pm).
-  - The curve increases drastically over the course of 5am to 10am; and
-    decreases drastically over the course of 2pm and after.
+- Remark on the scatterplot of 24H Minutes against Mean Accelerometers
+  Readings per minute
+  - We can see that the mean Accelerometers Readings per minute across
+    the 24H scale exhibit the following general pattern:
+    - The mean readings tend to fluctuate greatly during the course of a
+      day
+    - The mean readings reaches the lowest point at around 200-300
+      minutes(about 3am to 5am) and arrived at peak at about 600-850
+      minutes(about 10am to 2pm).
+    - The curve increases drastically over the course of 5am to 10am;
+      and decreases drastically over the course of 2pm and after.
+      Moreover, these general patterns stay consistent for all education
+      groups and sex groups.
+  - Males and Females do not differ greatly on Accelerometers Readings
+    over the 24H course.
+    - However, overall we can see that the female groups tend to have
+      slightly a higher accelerometers readings over the 24H scale.
+  - Different education groups do not differ greatly on Accelerometers
+    Readings over the 24H course.
 
 ### Problem 3
 
