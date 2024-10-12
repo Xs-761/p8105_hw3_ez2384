@@ -64,7 +64,7 @@ P8105_EZ2384_HW3
   demographics =  read.csv("../../Datasets/participant_demographics.csv", skip=4) %>% janitor::clean_names() %>% filter(age>=21) %>%
                   mutate(across(seqn:education, as.character)) %>%  
                   mutate(sex=recode(sex, "1"="male", "2"="female"), 
-                         education=recode(education, "1"="lower than High School", "2"="equivalent to High School", "3"="above High School")) %>% rename(id=seqn) %>% drop_na()
+                         education=recode(education, "1"="below High School", "2"="equivalent to High School", "3"="above High School")) %>% rename(id=seqn) %>% drop_na()
 
   accelerometers= read.csv("../../Datasets/accelerometers.csv") %>% janitor::clean_names() %>% rename(id=seqn) %>% mutate(id=as.character(id))
   
@@ -81,10 +81,10 @@ P8105_EZ2384_HW3
     ##   <chr>                     <chr>  <int>
     ## 1 above High School         female    59
     ## 2 above High School         male      56
-    ## 3 equivalent to High School female    23
-    ## 4 equivalent to High School male      35
-    ## 5 lower than High School    female    28
-    ## 6 lower than High School    male      27
+    ## 3 below High School         female    28
+    ## 4 below High School         male      27
+    ## 5 equivalent to High School female    23
+    ## 6 equivalent to High School male      35
 
 ``` r
 # Plot
@@ -115,7 +115,15 @@ P8105_EZ2384_HW3
 ![](HW3_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
 
 ``` r
-# Plot 24H Minutes against Age
+# Plot of 24H-Minutes against Median of Acceleratorometers_Readings
+  temp_longer = merged %>% pivot_longer(., cols = starts_with("min"), names_to = "minutes", values_to = "readings") %>%
+                mutate(minutes = as.numeric(gsub("min","",minutes))) %>% arrange(minutes, education)
+
+  median_min  = temp_longer %>% group_by(minutes) %>% summarise(median_min = median(readings, na.rm=TRUE)) %>%
+                mutate(median_min=round(median_min, digits=4)) %>% arrange(minutes)
+  
+  scatterplot_minutes = ggplot(median_min, mapping=aes(x=minutes, y=median_min)) + geom_point(na.rm=TRUE, size=1) + theme_light() +
+                        scale_x_continuous(breaks=seq(0,1400, by=200)) + scale_y_continuous(breaks=seq(0,15,by=2))
 ```
 
 - Remark on the barplot showing the distribution of sex by education
@@ -134,7 +142,13 @@ P8105_EZ2384_HW3
     a peak around middle ages. For those with education level lower than
     high school, the total minutes for subjects drops for all age
     intervals as age increases.
-- Remark on the scatterplot of 24H Minutes against Age
+- Remark on the scatterplot of 24H Minutes against Median_Minutes
+  - We can see that the median minutes tend to fluctuate greatly during
+    a course of a day, but reaches the lowest point at around 200-300
+    minutes (about 3am to 5 am) and arrived at the peak at about 600-850
+    minutes(about 10am to 2pm).
+  - The curve increases drastically over the course of 5am to 10am; and
+    decreases drastically over the course of 2pm and after.
 
 ### Problem 3
 
