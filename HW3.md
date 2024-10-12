@@ -59,12 +59,8 @@ P8105_EZ2384_HW3
 
 ### Problem 2
 
-- Load, tidy, merge, and otherwise organize the data sets. Exclusion of
-  participants less than 21 yrs and those with missing demographic data.
-  Encoded dataset so that all columns in the demographics dataset are
-  converted into character type.
-
 ``` r
+# Load, tidy, merge, and organize datasets. Exclusion of participants less than 21 yrs and those with missing demographic data.
   demographics =  read.csv("../../Datasets/participant_demographics.csv", skip=4) %>% janitor::clean_names() %>% filter(age>=21) %>%
                   mutate(across(seqn:education, as.character)) %>%  
                   mutate(sex=recode(sex, "1"="male", "2"="female"), 
@@ -73,15 +69,8 @@ P8105_EZ2384_HW3
   accelerometers= read.csv("../../Datasets/accelerometers.csv") %>% janitor::clean_names() %>% rename(id=seqn) %>% mutate(id=as.character(id))
   
   merged = left_join(demographics, accelerometers, "id")
-```
-
-- Produce a reader-friendly table for the number of men and women in
-  each education category create a visualization of the age
-  distributions for men and women in each education category Comment on
-  these items.
-
-``` r
-  # Table
+  
+# Table
   table_by_education =  demographics %>% group_by(education, sex) %>% count(name="count")
   table_by_education
 ```
@@ -98,7 +87,7 @@ P8105_EZ2384_HW3
     ## 6 lower than High School    male      27
 
 ``` r
-  # Plot
+# Plot
   barplot = ggplot(demographics, aes(x = sex, fill = education)) +
             geom_bar(position = "dodge") +
             labs(title = "Distribution of Sex by Education Level", x = "Sex", y = "Count", fill = "Education Level") +
@@ -106,24 +95,13 @@ P8105_EZ2384_HW3
   barplot
 ```
 
-![](HW3_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
-
-- From the bar graph we can see that
-  - Females have higher counts of education level above high school
-  - Males have an education level more evenly distributed
-- Using your tidied dataset, aggregate across minutes to create a total
-  activity variable for each participant. Plot these total
-  activities(y-axis) against age(x-axis). Your plot should compare men
-  to women and have separate panels for each education level. Include a
-  trend line or a smooth line to illustrate differences. Comment on your
-  plot.
+![](HW3_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 ``` r
-  # Aggregated Plot
-  aggregated = merged %>% mutate(total_minutes=rowSums(select(.,starts_with("min")))) %>% 
-                          relocate("id", "sex", "age", "bmi", "education", "total_minutes")
+# Aggregated Plot
+  aggregated = merged %>% mutate(total_minutes=rowSums(select(.,starts_with("min")))) %>%  relocate("id", "sex", "age", "bmi", "education", "total_minutes")
   
-  # Plot Total_Minutes against Age
+# Plot Total_Minutes against Age
   scatterplot_total = aggregated %>% mutate(age=as.integer(age)) %>%
                       ggplot(., mapping=aes(x=age, y=total_minutes, color=sex)) + geom_point(na.rm=TRUE, size=1) + theme_light() +
                       ggtitle("Scatterplot of Age against Total Minutes") + xlab("Age") + ylab("Total Minutes")+
@@ -134,15 +112,18 @@ P8105_EZ2384_HW3
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](HW3_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](HW3_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
 
 ``` r
-  # Plot 24-H Minutes against Age
-  scatterplot_24h = merged %>% mutate(age=as.integer(age)) %>%
-                    ggplot(., mapping=aes(x=age, y=))
+# Plot 24H Minutes against Age
 ```
 
-- From the scatterplot we can see that
+- Remark on the barplot showing the distribution of sex by education
+  level
+  - Females have higher counts of education level above high school
+  - Males have an education level more evenly distributed
+- Remark on the scatterplot of total_activities against age,
+  distinguished by sex, paneled by education level
   - Overall, participants have lower total minutes as age increases,
     regardless of their sex and education levels.
   - Overall, males tend to have higher total minutes compared to
@@ -153,10 +134,7 @@ P8105_EZ2384_HW3
     a peak around middle ages. For those with education level lower than
     high school, the total minutes for subjects drops for all age
     intervals as age increases.
-- Make a three-panel plot that shows the 24-hour activity time courses
-  for each education level and use color to indicate sex. Describe in
-  words any patterns or conclusions you can make based on this graph;
-  including smooth trends may help identify differences.
+- Remark on the scatterplot of 24H Minutes against Age
 
 ### Problem 3
 
@@ -239,7 +217,7 @@ P8105_EZ2384_HW3
   subplot1 + subplot2 + subplot3
 ```
 
-![](HW3_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](HW3_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
 # Figure showing impact of month, membership status, and bike type on the distribution of ride duration
@@ -258,7 +236,7 @@ P8105_EZ2384_HW3
   subplot4 + subplot5
 ```
 
-![](HW3_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+![](HW3_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->
 
 - Description of CityBike Datasets
   - CityBike Datasets consists of 4 component datasets with each
