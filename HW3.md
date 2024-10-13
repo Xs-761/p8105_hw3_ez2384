@@ -2,14 +2,24 @@ P8105_EZ2384_HW3
 ================
 
 ``` r
-# Load the required dataset
+# Load relevant packages
   library(p8105.datasets)
   library(dplyr)
   library(ggplot2)
   library(tidyverse)
   library(patchwork)
-  
-  data("ny_noaa")
+
+# Load relevant datasets
+  # For Prob.1
+    data("ny_noaa")
+  # For Prob.2
+    demographics   = read.csv("./participant_demographics.csv", skip=4)
+    accelerometers = read.csv("./accelerometers.csv")
+  # For Prob.3
+    city_bike1 = read.csv("./CityBike/CityBike_Jan2020.csv")   %>% janitor::clean_names() %>% mutate("year"="2020", "month"="Jan")
+    city_bike2 = read.csv("./CityBike/CityBike_July2020.csv")  %>% janitor::clean_names() %>% mutate("year"="2020", "month"="July")
+    city_bike3 = read.csv("./CityBike/CityBike_Jan2024.csv")   %>% janitor::clean_names() %>% mutate("year"="2024", "month"="Jan")
+    city_bike4 = read.csv("./CityBike/CityBike_July2024.csv")  %>% janitor::clean_names() %>% mutate("year"="2024", "month"="July")
 ```
 
 ### Problem 1
@@ -61,12 +71,11 @@ P8105_EZ2384_HW3
 
 ``` r
 # Load, tidy, merge, and organize datasets. Exclusion of participants less than 21 yrs and those with missing demographic data.
-  demographics =  read.csv("../../Datasets/participant_demographics.csv", skip=4) %>% janitor::clean_names() %>% filter(age>=21) %>%
-                  mutate(across(seqn:education, as.character)) %>%  
+  demographics =  demographics %>% janitor::clean_names() %>% filter(age>=21) %>% mutate(across(seqn:education, as.character)) %>%  
                   mutate(sex=recode(sex, "1"="male", "2"="female"), 
                          education=recode(education, "1"="below High School", "2"="equivalent to High School", "3"="above High School")) %>% rename(id=seqn) %>% drop_na()
 
-  accelerometers= read.csv("../../Datasets/accelerometers.csv") %>% janitor::clean_names() %>% rename(id=seqn) %>% mutate(id=as.character(id))
+  accelerometers= accelerometers %>% janitor::clean_names() %>% rename(id=seqn) %>% mutate(id=as.character(id))
   
   merged = left_join(demographics, accelerometers, "id")
   
@@ -197,12 +206,6 @@ P8105_EZ2384_HW3
   dataset.
 
 ``` r
-# CityBike Datasets
-  city_bike1 = read.csv("../../Datasets/CityBike/CityBike_Jan2020.csv")   %>% janitor::clean_names() %>% mutate("year"="2020", "month"="Jan")
-  city_bike2 = read.csv("../../Datasets/CityBike/CityBike_July2020.csv")  %>% janitor::clean_names() %>% mutate("year"="2020", "month"="July")
-  city_bike3 = read.csv("../../Datasets/CityBike/CityBike_Jan2024.csv")   %>% janitor::clean_names() %>% mutate("year"="2024", "month"="Jan")
-  city_bike4 = read.csv("../../Datasets/CityBike/CityBike_July2024.csv")  %>% janitor::clean_names() %>% mutate("year"="2024", "month"="July")
-
 # Combined CityBike Dataframe
   city_bike_binded = bind_rows(city_bike1,city_bike2,city_bike3,city_bike4) %>%
                      relocate("ride_id", "member_casual", "year", "month", "weekdays", "rideable_type", "start_station_name", "end_station_name") %>%
