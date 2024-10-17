@@ -164,14 +164,14 @@ P8105_EZ2384_HW3
     ## the `.groups` argument.
 
 ``` r
-  scatterplot_24H = ggplot(readings_longer, mapping=aes(x=minutes, y=mean, color=sex)) + geom_point(size=0.25, rm.NA=TRUE) + theme_light() + facet_grid(.~education) + 
+  scatterplot_24H = ggplot(readings_longer, mapping=aes(x=minutes, y=mean, color=sex)) + geom_point(size=0.25, rm.na=TRUE) + theme_light() + facet_grid(.~education) + 
                     geom_smooth(size=0.7) + scale_x_continuous(limits=c(0,1400), breaks=seq(0,1400, by=200)) + 
                     scale_y_continuous(limits=c(0,18), breaks=seq(0,18,by=3)) + xlab("24H Scale in Minutes") + ylab("Mean Acceleratorometers Readings per Minute") +
                     ggtitle("Scatterplot of 24H-Minutes against Mean Acceleratorometers Readings") + theme(legend.position = "bottom", plot.title=element_text(hjust=.5))
 ```
 
-    ## Warning in geom_point(size = 0.25, rm.NA = TRUE): Ignoring unknown parameters:
-    ## `rm.NA`
+    ## Warning in geom_point(size = 0.25, rm.na = TRUE): Ignoring unknown parameters:
+    ## `rm.na`
 
     ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
     ## ℹ Please use `linewidth` instead.

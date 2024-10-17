@@ -116,7 +116,7 @@ editor_options:
       For those with education level equivalent to high school, the total minutes for subjects has a peak around middle ages.
       For those with education level lower than high school, the total minutes for subjects drops for all age intervals as age increases.
       
-```{r, scatterplot of 24h-minutes against mean readings}
+```{r, scatterplot of 24h-minutes against mean readings, warning=FALSE}
 # Scatterplot of 24H-Minutes against Mean Acceleratorometers Readings
   temp_longer = merged %>% pivot_longer(., cols = starts_with("min"), names_to = "minutes", values_to = "readings") %>%
                 mutate(minutes = as.numeric(gsub("min","",minutes)))
