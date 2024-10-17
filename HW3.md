@@ -278,23 +278,14 @@ P8105_EZ2384_HW3
 ![](HW3_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
-# Figure showing impact of month, membership status, and bike type on the distribution of ride duration
+# Figure showing impact of month, membership status, and bike type on the distribution of ride duration in 2024
 
-  subplot4 = ggplot(median_duration_membership, aes(x = type, y = median_duration)) +
-             geom_bar(stat="identity", fill="darkgreen", width=0.75) +
-             xlab("Membership Type") + ylab("Median Duration") + ggtitle("Median Duration(Membership Type)") +
-             theme_light() + theme(plot.title = element_text(hjust=0.5))
-  
-  subplot5 = ggplot(median_duration_bike, aes(x=bike, y=median_duration)) +
-             geom_bar(stat="identity", fill="darkred", width=0.75) +
-             xlab("Bike Type") + ylab("Median Duration") + ggtitle("Median Duration(Bike Type)") +
-             theme_light() + theme(plot.title = element_text(hjust=0.5))
-
-  # Final Plot of Median Riding Duration depending on Membership_Type/Bike_Type
-  subplot4 + subplot5
+  city_bike_2024 = city_bike_binded |> filter(year==2024) |> mutate(month=as.factor(month)) |>
+                   group_by(month, type, bike) |> ggplot(aes(x=month, y=duration, fill=month)) + geom_violin(scale="width") +
+                   facet_grid(bike ~ type) + theme_light() +
+                   xlab("Month") + ylab("Duration(min)") + ggtitle("Distribution of Ride Duration in 2024") +
+                   theme(plot.title=element_text(hjust=0.5))
 ```
-
-![](HW3_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->
 
 - Description of CityBike Datasets
   - CityBike Datasets consists of 4 component datasets with each
