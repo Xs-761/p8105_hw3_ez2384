@@ -168,28 +168,10 @@ P8105_EZ2384_HW3
                     geom_smooth(size=0.7) + scale_x_continuous(limits=c(0,1400), breaks=seq(0,1400, by=200)) + 
                     scale_y_continuous(limits=c(0,18), breaks=seq(0,18,by=3)) + xlab("24H Scale in Minutes") + ylab("Mean Acceleratorometers Readings per Minute") +
                     ggtitle("Scatterplot of 24H-Minutes against Mean Acceleratorometers Readings") + theme(legend.position = "bottom", plot.title=element_text(hjust=.5))
-```
-
-    ## Warning in geom_point(size = 0.25, rm.na = TRUE): Ignoring unknown parameters:
-    ## `rm.na`
-
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `linewidth` instead.
-    ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
-
-``` r
   scatterplot_24H
 ```
 
     ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
-
-    ## Warning: Removed 240 rows containing non-finite outside the scale range
-    ## (`stat_smooth()`).
-
-    ## Warning: Removed 240 rows containing missing values or values outside the scale range
-    ## (`geom_point()`).
 
 ![](HW3_files/figure-gfm/scatterplot%20of%2024h-minutes%20against%20mean%20readings-1.png)<!-- -->
 
