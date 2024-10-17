@@ -78,7 +78,9 @@ P8105_EZ2384_HW3
   accelerometers= accelerometers %>% janitor::clean_names() %>% rename(id=seqn) %>% mutate(id=as.character(id))
   
   merged = left_join(demographics, accelerometers, "id")
-  
+```
+
+``` r
 # Table
   table_by_education =  demographics %>% group_by(education, sex) %>% count(name="count")
   table_by_education
@@ -105,7 +107,20 @@ P8105_EZ2384_HW3
   age_distribution_plot
 ```
 
-![](HW3_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+![](HW3_files/figure-gfm/age%20distribution%20plot-1.png)<!-- -->
+
+- Remark on the density plot showing the distribution of sex by
+  education level
+  - Males are more heavily represented in older age groups for higher
+    education levels and younger age groups for lower education levels.
+  - Females show a relatively higher density in middle age across
+    education categories, with a particularly high density in the “above
+    high school” education group.
+  - Education categories are associated with different age
+    distributions, with “above high school” having the broadest spread
+    of ages
+  - Two sex differ greatly on their distribution within the equivalent
+    to high school category
 
 ``` r
 # Aggregated Plot
@@ -122,7 +137,20 @@ P8105_EZ2384_HW3
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](HW3_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
+![](HW3_files/figure-gfm/total%20minutes%20against%20age-1.png)<!-- -->
+
+- Remark on the scatterplot of total_activities against age,
+  distinguished by sex, paneled by education level
+  - Overall, participants have lower total minutes as age increases,
+    regardless of their sex and education levels.
+  - Overall, males tend to have higher total minutes compared to
+    females, regardless of their age and education levels.
+  - For those with education level above high school, the total minutes
+    for subjects is relatively smooth and even. For those with education
+    level equivalent to high school, the total minutes for subjects has
+    a peak around middle ages. For those with education level lower than
+    high school, the total minutes for subjects drops for all age
+    intervals as age increases.
 
 ``` r
 # Scatterplot of 24H-Minutes against Mean Acceleratorometers Readings
@@ -163,24 +191,8 @@ P8105_EZ2384_HW3
     ## Warning: Removed 240 rows containing missing values or values outside the scale range
     ## (`geom_point()`).
 
-![](HW3_files/figure-gfm/unnamed-chunk-1-3.png)<!-- -->
+![](HW3_files/figure-gfm/scatterplot%20of%2024h-minutes%20against%20mean%20readings-1.png)<!-- -->
 
-- Remark on the barplot showing the distribution of sex by education
-  level
-  - Females have higher counts of education level above high school
-  - Males have an education level more evenly distributed
-- Remark on the scatterplot of total_activities against age,
-  distinguished by sex, paneled by education level
-  - Overall, participants have lower total minutes as age increases,
-    regardless of their sex and education levels.
-  - Overall, males tend to have higher total minutes compared to
-    females, regardless of their age and education levels.
-  - For those with education level above high school, the total minutes
-    for subjects is relatively smooth and even. For those with education
-    level equivalent to high school, the total minutes for subjects has
-    a peak around middle ages. For those with education level lower than
-    high school, the total minutes for subjects drops for all age
-    intervals as age increases.
 - Remark on the scatterplot of 24H Minutes against Mean Accelerometers
   Readings per minute
   - We can see that the mean Accelerometers Readings per minute across
@@ -213,7 +225,28 @@ P8105_EZ2384_HW3
                      rename("id"="ride_id", "type"="member_casual", "bike"="rideable_type", "start_station"="start_station_name", "end_station"="end_station_name") %>%
                      mutate(weekdays=recode(weekdays, "Monday"="Mon","Tuesday"="Tue", "Wednesday"="Wed", "Thursday"="Thu", "Friday"="Fri", "Saturday"="Sat", "Sunday"="Sun")) %>%
                      mutate(weekdays=factor(weekdays, levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")))
+```
 
+- Description of CityBike Datasets
+  - CityBike Datasets consists of 4 component datasets with each
+    consisting of 7 variables:
+    - ride_id : unique identifier for CityBike user for the particular
+      trip
+    - rideable_type: type of bike used by user for the particular trip
+    - weekdays: weekday info when riding for the particular trip
+    - duration: duration or ride for the particular trip
+    - start_station_name: set-off station name for the particular trip
+    - end_station_name: ending station name for the particular trip
+    - member_casual: membership type of the user for the particular trip
+  - Each dataset has dimensions as below:
+    - Dataset1: info of Jan.2020, dimension=12420 x 7
+    - Dataset2: info of July.2020, dimension=21048 x 7
+    - Dataset3: info of Jan.2024, dimension=18861 x 7
+    - Dataset4: info of July.2024, dimension=47156 x 7
+  - Completeness:
+    - Each component dataset is complete and without missing values
+
+``` r
 # Table showing total number of rides in each combination of year and month
   table_by_YearMonthType =  city_bike_binded %>% group_by(year, month, type) %>% count(name="count")
   table_by_YearMonthType
@@ -231,6 +264,15 @@ P8105_EZ2384_HW3
     ## 6 2024  Jan   member 16753
     ## 7 2024  July  casual 10894
     ## 8 2024  July  member 36262
+
+- Comment on table_by_YearMonthType
+  - The total number of riders rise considerably each year from 2020 to
+    2024, and has risen from 12480 riders in Jan.2020 to 47156 riders in
+    July.2024.
+  - The total number of members rise steadily and considerably each time
+    interval from Jan.2020 to July.2020 to Jan.2024 to July.2024
+  - Overall, for each timeslot, the number of members are considerably
+    lower compared to the number of casual riders at that time.
 
 ``` r
 # Top 5 originating stations and the corresponding number of rides in July.2024
@@ -276,7 +318,17 @@ P8105_EZ2384_HW3
   subplot1 + subplot2 + subplot3
 ```
 
-![](HW3_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](HW3_files/figure-gfm/plot%20showing%20median%20duration%20depends%20on%20covariates-1.png)<!-- -->
+
+- Remark on plot showing median durations depending on
+  year/month/weekday
+  - We can see a clear pattern that, citybike users in weekends are
+    considerably more active compared to them in weekdays.
+  - The median users in 2024 is lower than that in 2020; and the median
+    users in July is higher than that in January. However, without more
+    year groups and/or more month groups, we cannot conclude for sure
+    whether there is a true pattern or the observed difference is due
+    merely to chance.
 
 ``` r
 # Figure showing impact of month, membership status, and bike type on the distribution of ride duration in 2024
@@ -288,41 +340,6 @@ P8105_EZ2384_HW3
                    theme(plot.title=element_text(hjust=0.5))
 ```
 
-- Description of CityBike Datasets
-  - CityBike Datasets consists of 4 component datasets with each
-    consisting of 7 variables:
-    - ride_id : unique identifier for CityBike user for the particular
-      trip
-    - rideable_type: type of bike used by user for the particular trip
-    - weekdays: weekday info when riding for the particular trip
-    - duration: duration or ride for the particular trip
-    - start_station_name: set-off station name for the particular trip
-    - end_station_name: ending station name for the particular trip
-    - member_casual: membership type of the user for the particular trip
-  - Each dataset has dimensions as below:
-    - Dataset1: info of Jan.2020, dimension=12420 x 7
-    - Dataset2: info of July.2020, dimension=21048 x 7
-    - Dataset3: info of Jan.2024, dimension=18861 x 7
-    - Dataset4: info of July.2024, dimension=47156 x 7
-  - Completeness:
-    - Each component dataset is complete and without missing values
-- Comment on table_by_YearMonthType
-  - The total number of riders rise considerably each year from 2020 to
-    2024, and has risen from 12480 riders in Jan.2020 to 47156 riders in
-    July.2024.
-  - The total number of members rise steadily and considerably each time
-    interval from Jan.2020 to July.2020 to Jan.2024 to July.2024
-  - Overall, for each timeslot, the number of members are considerably
-    lower compared to the number of casual riders at that time.
-- Remark on plot showing median durations depending on
-  year/month/weekday
-  - We can see a clear pattern that, citybike users in weekends are
-    considerably more active compared to them in weekdays.
-  - The median users in 2024 is lower than that in 2020; and the median
-    users in July is higher than that in January. However, without more
-    year groups and/or more month groups, we cannot conclude for sure
-    whether there is a true pattern or the observed difference is due
-    merely to chance.
 - Remark on plot showing median durations depending on
   membership_type/bike_type
   - Overall, those who are casual riders have a longer biking duration
