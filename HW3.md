@@ -97,11 +97,12 @@ P8105_EZ2384_HW3
 
 ``` r
 # Plot
-  barplot = ggplot(demographics, aes(x = sex, fill = education)) +
-            geom_bar(position = "dodge") +
-            labs(title = "Distribution of Sex by Education Level", x = "Sex", y = "Count", fill = "Education Level") +
-            theme_light() + theme(plot.title=element_text(hjust=0.5))
-  barplot
+  age_distribution_plot = ggplot(merged, aes(x = as.numeric(age), fill = sex)) + geom_density(alpha = 0.35) + 
+                          facet_wrap(. ~ education) +
+                          labs(title = "Age Distribution by Gender and Education Category", x = "Age", y = "Density") + 
+                          theme_minimal() +
+                          theme(plot.title = element_text(hjust = 0.5))
+  age_distribution_plot
 ```
 
 ![](HW3_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->

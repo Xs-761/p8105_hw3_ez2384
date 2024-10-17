@@ -78,11 +78,12 @@ editor_options:
   table_by_education
 
 # Plot
-  barplot = ggplot(demographics, aes(x = sex, fill = education)) +
-            geom_bar(position = "dodge") +
-            labs(title = "Distribution of Sex by Education Level", x = "Sex", y = "Count", fill = "Education Level") +
-            theme_light() + theme(plot.title=element_text(hjust=0.5))
-  barplot
+  age_distribution_plot = ggplot(merged, aes(x = as.numeric(age), fill = sex)) + geom_density(alpha = 0.35) + 
+                          facet_wrap(. ~ education) +
+                          labs(title = "Age Distribution by Gender and Education Category", x = "Age", y = "Density") + 
+                          theme_minimal() +
+                          theme(plot.title = element_text(hjust = 0.5))
+  age_distribution_plot
 
 # Aggregated Plot
   aggregated = merged %>% mutate(total_minutes=rowSums(select(.,starts_with("min")))) %>%  relocate("id", "sex", "age", "bmi", "education", "total_minutes")
